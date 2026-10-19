@@ -3,7 +3,7 @@ const Allocator = std.mem.Allocator;
 
 /// undirected graph
 /// memory friendly for sparse graphs (list of neighbours)
-const UGraph = struct {
+pub const UGraph = struct {
     n: usize = 0,
     m: usize = 0,
     fid: []usize = undefined,
