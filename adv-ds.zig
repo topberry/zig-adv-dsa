@@ -16,13 +16,15 @@ pub fn Node(comptime T: type) type {
 
 pub fn SplayTree(comptime T: type) type {
     return struct {
-        root: ?*Node(T) = null,
-        pool: std.heap.MemoryPool(Node(T)) = .empty,
+        root: ?*Node(T),
+        pool: std.heap.MemoryPool(Node(T)),
 
         const Self = @This();
 
-        pub fn init() Self {
-            return Self {};
+        pub const empty: Self = .{.root = null, .pool = .empty};
+
+        pub fn deinit(self: *Self, alc: Allocator) void {
+            self.pool.deinit(alc);
         }
 
         fn rotation_L(x: *Node(T)) void {
@@ -174,10 +176,6 @@ pub fn SplayTree(comptime T: type) type {
             }
         }
 
-        pub fn deinit(self: *Self, alc: Allocator) void {
-            self.pool.deinit(alc);
-        }
-
         pub fn print(self: *Self) void {
             printTree(self.root, 0);
         }
@@ -207,7 +205,7 @@ const expectError = std.testing.expectError;
 test "splay trees base test" {
     const alc = std.testing.allocator;
 
-    var st = SplayTree(u32).init();
+    var st:SplayTree(u32) = .empty;
     defer st.deinit(alc);
 
     try st.insert(alc, 42);
