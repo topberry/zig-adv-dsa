@@ -205,7 +205,7 @@ const expectError = std.testing.expectError;
 test "splay trees base test" {
     const alc = std.testing.allocator;
 
-    var st:SplayTree(u32) = .empty;
+    var st: SplayTree(u32) = .empty;
     defer st.deinit(alc);
 
     try st.insert(alc, 42);

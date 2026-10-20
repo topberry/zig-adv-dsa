@@ -22,8 +22,8 @@ pub fn bfs(alc: Allocator, g: UGraph, s_id: u32, t_id: u32) !u32 {
     @memset(visited, false);
     visited[s_id] = true;
 
-    while (!q.empty()) {
-        const current, const steps = try q.pop();
+    while (q.pop()) |cs| {
+        const current, const steps = cs;
         for (g.get_neighbours(current)) |u| {
             if (!visited[u]) {
                 if (u == t_id) { return steps + 1; }
