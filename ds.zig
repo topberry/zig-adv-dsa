@@ -136,6 +136,7 @@ pub fn Queue(comptime T: type) type {
     };
 }
 
+const prnt = @import("print.zig");
 pub fn MinBinHeap(comptime T: type) type {
     return struct {
         head: usize,
@@ -162,11 +163,12 @@ pub fn MinBinHeap(comptime T: type) type {
             var next = current / 2;
             self.head += 1;
             while (next != 0 and self.data.get(next) > item) {
+                // swap
                 self.data.edit(current, self.data.get(next));
-                self.data.edit(next, item);
                 current = next;
                 next = next / 2;
             }
+            self.data.edit(current, item);
         }
 
         pub fn extractMin(self: *Self) !?T {
@@ -178,27 +180,26 @@ pub fn MinBinHeap(comptime T: type) type {
             if (self.head == 1) { return ret_value; }
             self.data.edit(1, new_root);
             var current: usize = 1;
+            const current_val = self.data.get(current);
             while (2 * current < self.head) {
-                const current_val = self.data.get(current);
+                // get indices
                 const left_ind = 2 * current;
-                const left_val = self.data.get(left_ind);
                 const right_ind = current * 2 + 1;
-                var right_val = left_val + 1;
-                if (right_ind < self.head) { right_val = self.data.get(right_ind); }
+
+                // get values
+                var min_val = self.data.get(left_ind);
                 var min_id = left_ind;
-                var min_val = left_val;
-                if (right_val < left_val) {
-                    min_id = right_ind;
-                    min_val = right_val;
-                }
+                if (right_ind < self.head and self.data.get(right_ind) < min_val) { min_val = self.data.get(right_ind); min_id = right_ind; }
+
                 // check if swap
-                if (current_val <= min_val) {return ret_value; }
+                if (current_val <= min_val) { break; }
+
                 // swap
-                self.data.edit(min_id, current_val);
                 self.data.edit(current, min_val);
 
                 current = min_id;
             }
+            self.data.edit(current, current_val);
             return ret_value;
         }
     };
